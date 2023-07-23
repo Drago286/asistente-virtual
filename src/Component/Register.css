@@ -1,23 +1,14 @@
-/* Login.css */
-.Login {
-     display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f1f1f1;
-}
+/* Register.css */
 
 /* Estilos para el contenedor principal */
-.login-container {
+.register-container {
     width: 400px;
     margin: 0 auto;
-    justify-content: center;
     padding: 20px;
-    align-items: center;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   /* Estilos para el encabezado */
@@ -47,8 +38,9 @@
   }
   
   input[type="text"],
+  input[type="email"],
   input[type="password"] {
-    width: 95%;
+    width: 100%;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -56,8 +48,8 @@
     outline: none;
   }
   
-  /* Estilos para el botón de inicio de sesión */
-  .btn-login {
+  /* Estilos para el botón de registro */
+  .btn-register {
     width: 100%;
     padding: 10px;
     font-size: 18px;
@@ -67,16 +59,15 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    
     outline: none;
     transition: background-color 0.2s ease;
   }
   
-  .btn-login:hover {
+  .btn-register:hover {
     background-color: #2980b9;
   }
   
-  .btn-login:active {
+  .btn-register:active {
     background-color: #1f6697;
   }
   

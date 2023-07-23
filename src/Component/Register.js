@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Register.css'; // Agrega el archivo CSS para el estilo
+//import './Register.css'; // Agrega el archivo CSS para el estilo
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -20,16 +20,17 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/register", {
+      const response = await fetch("http://localhost:8000/api/register", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: name,
-          email: email,
-          SAP: SAP,
-          password: password,
+            name: name,
+            email: email,
+            SAP: SAP,
+            password: password,
+            password_confirmation: confirmPassword,
         }),
       });
 
@@ -40,8 +41,10 @@ const Register = () => {
         console.log(data);
       } else {
         setError('Ocurrió un error en el registro');
+        console.log(data);
       }
     } catch (error) {
+        console.log(toString(error));
       setError('Ocurrió un error en la solicitud.');
     }
   };

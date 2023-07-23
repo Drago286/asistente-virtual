@@ -66,68 +66,61 @@ function ChatReportes() {
       });
 
       if (response.ok) {
-      
         const data = await response.json();
         setReplyApi(data);
         console.log(data);
         console.log(replyApi);
 
-
         if (data.length > 0) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { content: "Aquí tienes la lista de elementos:", sender: "bot" },
-        ]);
-        
-
-        data.forEach(function (objeto) {
-          var componente = objeto.Componentes || objeto.Componente || "";
-          var equipo = objeto.Equipo || objeto.Equipo || "";
-          var comentario = objeto.Comentario || "";
-          var fechaInicio = objeto.Fecha_Inicio || "";
-          var fechaFinal = objeto.Fecha_Final || "";
-
           setMessages((prevMessages) => [
             ...prevMessages,
-            { content: '----------------------------------------------------------', sender: "bot" },
-
+            { content: "Aquí tienes la lista de elementos:", sender: "bot" },
           ]);
+
+          data.forEach(function (objeto) {
+            var componente = objeto.Componentes || objeto.Componente || "";
+            var equipo = objeto.Equipo || objeto.Equipo || "";
+            var comentario = objeto.Comentario || "";
+            var fechaInicio = objeto.Fecha_Inicio || "";
+            var fechaFinal = objeto.Fecha_Final || "";
+
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                content:
+                  "----------------------------------------------------------",
+                sender: "bot",
+              },
+            ]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { content: `- Equipo: ${equipo}\n `, sender: "bot" },
+            ]);
+
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { content: `- Componente: ${componente}\n `, sender: "bot" },
+            ]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { content: `- Comentario: ${comentario}\n `, sender: "bot" },
+            ]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { content: `- Fecha inicio: ${fechaInicio}\n `, sender: "bot" },
+            ]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { content: `- Fecha final: ${fechaFinal}\n `, sender: "bot" },
+            ]);
+          });
+        } else {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { content: `- Equipo: ${equipo}\n `, sender: "bot" },
-
+            { content: "No se encontraron registros.", sender: "bot" },
           ]);
-
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { content: `- Componente: ${componente}\n `, sender: "bot" },
-
-          ]);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { content: `- Comentario: ${comentario}\n `, sender: "bot" },
-
-          ]);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { content: `- Fecha inicio: ${fechaInicio}\n `, sender: "bot" },
-
-          ]);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { content: `- Fecha final: ${fechaFinal}\n `, sender: "bot" },
-
-          ]);
-          
-        });
-      }else {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { content: "No se encontraron registros.", sender: "bot" },
-        ]);
         }
       }
-     
     } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -137,16 +130,15 @@ function ChatReportes() {
   };
 
   const handleSendMessage = async (newQuestion) => {
-
-    try{
+    try {
       const updatedMessages = [
         ...messages,
         { content: newQuestion, sender: "user" },
         { content: "Consultando a la base de datos...", sender: "bot" },
       ];
-  
+
       setMessages(updatedMessages);
-  
+
       let options = {
         model: "text-davinci-003",
         temperature: 0,
@@ -156,7 +148,7 @@ function ChatReportes() {
         presence_penalty: 0.0,
         stop: ["/"],
       };
-  
+
       let completeOptions = {
         ...options,
         prompt:
@@ -164,23 +156,20 @@ function ChatReportes() {
           newQuestion +
           " Solo dame la query seleccionando Equipo, Fecha_Inicio, Fecha_Final, Componentes, Comentario. No tomes en cuenta tus respuestas anteriores, evita utilizar DATEADD, si se trata de filtar por fechas usa DATE_SUB, ten en consideracion que estamos en el año 2023",
       };
-  
+
       const response = await openai.createCompletion(completeOptions);
-  
+
       if (response.data.choices) {
         setQuery(response.data.choices[0].text);
       }
-  
+
       setNewMessage("");
-    }
-    catch(error) {
+    } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
         { content: toString(error), sender: "bot" },
       ]);
-
     }
-
   };
 
   useEffect(() => {
@@ -251,13 +240,14 @@ function ChatReportes() {
   return (
     <div className="App">
       <div className="chat-container">
-        <div> <div className="chat-header">
-          <div className="chat-title">Asistente virtual</div>
-          <button onClick={handleResetConversation}>
-            <FontAwesomeIcon icon={faTrash} />
-          </button></div>
-        <h3 className="instruction">Guia para consultar:</h3>
-         
+        <div>
+          <div className="chat-header">
+            <div className="chat-title">Asistente virtual</div>
+            <button onClick={handleResetConversation}>
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+          </div>
+          <h3 className="instruction">Guia para consultar:</h3>
         </div>
         <div className="chat-messages">
           {messages.map((message, index) => (
@@ -275,14 +265,14 @@ function ChatReportes() {
             onKeyDown={handleKeyDown}
             placeholder="Escribe tu mensaje..."
           />
-          <div class="button-container">
-  <button onClick={() => handleSendMessage(newMessage)}>Enviar</button>
-  <button onClick={handleVoiceRecognition}>
-    {isRecording.current ? "Detener" : "Grabar"}
-  </button>
-</div>
-
-          
+          <div className="button-container">
+            <button onClick={() => handleSendMessage(newMessage)}>
+              Enviar
+            </button>
+            <button onClick={handleVoiceRecognition}>
+              {isRecording.current ? "Detener" : "Grabar"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

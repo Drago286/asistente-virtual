@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ChatReportes from './Component/ChatReportes';
 import Login from './Component/Login'; // Importa el componente de inicio de sesión
-import './App.css';
+
 
 function App() {
   // Estado para verificar si el usuario está autenticado
