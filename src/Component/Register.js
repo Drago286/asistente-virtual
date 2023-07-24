@@ -60,7 +60,7 @@ const Register = () => {
         </div>
         <div className="form-group">
           <label htmlFor="email">Correo Electrónico</label>
-          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%' }} />
         </div>
         <div className="form-group">
           <label htmlFor="SAP">SAP</label>
@@ -82,4 +82,5 @@ const Register = () => {
   );
 };
 
-export default Register;
+export
+ default Register;

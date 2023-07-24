@@ -47,6 +47,7 @@
   }
   
   input[type="text"],
+  input[type= "email"] ,
   input[type="password"] {
     width: 95%;
     padding: 10px;
@@ -78,5 +79,8 @@
   
   .btn-login:active {
     background-color: #1f6697;
+  }
+  .password-reset-link {
+    align-items: center;
   }
   

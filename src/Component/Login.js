@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ChangePassword from "./ChangePassword";
 import Register from "./Register";
 import "./Login.css"; // Agrega el archivo CSS para el estilo
 
@@ -9,11 +10,12 @@ const Login = ({ onLoginSuccess }) => {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [accountApproval, setAccountApproval] = useState(false);
   const [showApprovalMessage, setShowApprovalMessage] = useState(false);
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       // Realiza la solicitud al backend con las credenciales ingresadas
       const response = await fetch("http://localhost:8000/api/loginApi", {
@@ -26,9 +28,9 @@ const Login = ({ onLoginSuccess }) => {
           password: password,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         // Verificar el estado del usuario antes de permitir el inicio de sesión
         console.log(data);
@@ -45,8 +47,6 @@ const Login = ({ onLoginSuccess }) => {
       setError("Ocurrió un error en la solicitud.");
     }
   };
-  
-  
 
   const toggleRegisterForm = () => {
     setShowRegisterForm(!showRegisterForm);
@@ -57,10 +57,27 @@ const Login = ({ onLoginSuccess }) => {
     setShowApprovalMessage(false);
   };
 
+  const handleShowChangePasswordForm = () => {
+    setShowChangePasswordForm(true);
+    setShowRegisterForm(false);
+    setShowApprovalMessage(false);
+  };
+
+  const handleCancelChangePassword = () => {
+    setShowChangePasswordForm(false);
+  };
+
   return (
     <div className="Login">
       <div className="login-container">
-        {showApprovalMessage && accountApproval ? (
+        {showChangePasswordForm ? (
+          <>
+            <ChangePassword />
+            <button onClick={handleCancelChangePassword}>
+              Volver al inicio de sesión
+            </button>
+          </>
+        ) : showApprovalMessage && accountApproval ? (
           <>
             <h2>Proceso de aprobación en curso</h2>
             <p>
@@ -113,6 +130,12 @@ const Login = ({ onLoginSuccess }) => {
                 <button onClick={toggleRegisterForm}>Registrarse aquí</button>
               </p>
             )}
+
+            <p className="forgot-password-link">
+              <button onClick={handleShowChangePasswordForm}>
+                Olvidé mi contraseña
+              </button>
+            </p>
           </>
         )}
       </div>

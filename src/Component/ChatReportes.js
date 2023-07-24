@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faMicrophone,
+  faStopCircle,
+} from "@fortawesome/free-solid-svg-icons";
+
 import "./ChatReportes.css";
 
 function ChatReportes() {
@@ -88,7 +93,7 @@ function ChatReportes() {
               ...prevMessages,
               {
                 content:
-                  "----------------------------------------------------------",
+                  "-----------------------------------------------",
                 sender: "bot",
               },
             ]);
@@ -189,6 +194,12 @@ function ChatReportes() {
     } else {
       startRecognition();
     }
+    const microphoneButton = document.querySelector(
+      ".button-container button:last-child"
+    );
+    if (microphoneButton) {
+      microphoneButton.classList.toggle("recording");
+    }
   };
 
   const startRecognition = () => {
@@ -244,7 +255,7 @@ function ChatReportes() {
           <div className="chat-header">
             <div className="chat-title">Asistente virtual</div>
             <button onClick={handleResetConversation}>
-              <FontAwesomeIcon icon={faTrash} />
+              Eliminar conversacion
             </button>
           </div>
           <h3 className="instruction">Guia para consultar:</h3>
@@ -270,7 +281,11 @@ function ChatReportes() {
               Enviar
             </button>
             <button onClick={handleVoiceRecognition}>
-              {isRecording.current ? "Detener" : "Grabar"}
+              {isRecording.current ? (
+                <FontAwesomeIcon icon={faStopCircle} /> // Usa faStopCircle en lugar de faTimesCircle
+              ) : (
+                <FontAwesomeIcon icon={faMicrophone} /> // Usa faMicrophone en lugar de faMicrophoneAlt
+              )}
             </button>
           </div>
         </div>
