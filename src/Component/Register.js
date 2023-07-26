@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
-//import './Register.css'; // Agrega el archivo CSS para el estilo
 
-const Register = () => {
+const Register = ({ onRegisterSuccess }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [SAP, setSAP] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Verificar que las contraseñas coincidan
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       return;
     }
 
+    if (loading) {
+      return;
+    }
+
+    if (!SAP || !password || !name || !confirmPassword || !email) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const response = await fetch("http://localhost:8000/api/register", {
+      const response = await fetch("http://172.20.10.2:8000/api/register", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,17 +47,20 @@ const Register = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Si el registro es exitoso, puedes redireccionar al usuario a otra página o realizar alguna acción
-        console.log(data);
+        // Llamar a la función onRegisterSuccess para notificar al componente Login
+        onRegisterSuccess();
       } else {
         setError('Ocurrió un error en el registro');
         console.log(data);
       }
     } catch (error) {
-        console.log(toString(error));
+      console.log(toString(error));
       setError('Ocurrió un error en la solicitud.');
     }
+
+    setLoading(false);
   };
+
 
   return (
     <div className="register-container">
@@ -74,13 +87,12 @@ const Register = () => {
           <label htmlFor="confirmPassword">Confirmar Contraseña</label>
           <input type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
         </div>
-        <button type="submit" className="btn-register">
-          Registrarse
+        <button type="submit" className="btn-register" disabled={loading}>
+          {loading ? 'Cargando...' : 'Registrarse'}
         </button>
       </form>
     </div>
   );
 };
 
-export
- default Register;
+export default Register;

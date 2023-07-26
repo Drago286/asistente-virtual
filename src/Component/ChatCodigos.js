@@ -6,10 +6,9 @@ import {
   faStopCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
-import "./ChatReportes.css";
+import "./ChatCodigos.css";
 
-function ChatReportes() {
-  
+function ChatCodigos() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [query, setQuery] = useState("");
@@ -17,8 +16,7 @@ function ChatReportes() {
 
   const recognition = useRef(null);
   const isRecording = useRef(false);
-  const mensajeBase =
-    "En contexto a una tabla llamada Fallas con las siguientes columnas Equipo,Fecha Inicio,Hora Inicio,Fecha Final,Hora Final,Duracion,Duracion Excel,Codigo,Categoria	Descripcion,Comentario	Caidas,Tipo Mant.,Código,Sistema,Sub Sistem.,Componentes,Equipo	Sistema,Componente,Horas,Mes,Motor,Flota, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
+  const mensajeBase = "En contexto a una tabla llamada Codigos con las siguientes columnas Codigo,Descripcion_del_Evento,Limitaciones_del_Evento,Deteccion_de_la_Informacion,Guia_para_la_Deteccion_de_Fallas,Equipo, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
 
   const API_KEY = "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"; // Replace with your valid API key
 
@@ -31,7 +29,7 @@ function ChatReportes() {
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
-      const response = await fetch("http://172.20.10.2:8000/api/execute-query", {
+      const response = await fetch("http://172.20.10.2:8000/api/execute-query-codigos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,59 +44,35 @@ function ChatReportes() {
         console.log(replyApi);
 
         if (data.length > 0) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { content: "Aquí tienes la lista de elementos:", sender: "bot" },
-          ]);
+          
 
           data.forEach(function (objeto) {
-            var componente = objeto.Componentes || objeto.Componente || "";
-            var equipo = objeto.Equipo || objeto.Equipo || "";
-            var comentario = objeto.Comentario || "";
-            var fechaInicio = objeto.Fecha_Inicio || "";
-            var fechaFinal = objeto.Fecha_Final || "";
-
+            var Detección_de_la_lnformacion = objeto.Deteccion_de_la_Informacion || "";
+            var Guia_para_la_Detección_de_Fallas = objeto.Guia_para_la_Deteccion_de_Fallas ||  "";
+            
+           
             setMessages((prevMessages) => [
               ...prevMessages,
-              {
-                content:
-                  "----------------------------------",
-                sender: "bot",
-              },
-            ]);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { content: `- Equipo: ${equipo}\n `, sender: "bot" },
+              { content: `- Deteccion: ${Detección_de_la_lnformacion}\n `, sender: "bot" },
             ]);
 
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Componente: ${componente}\n `, sender: "bot" },
+              { content: `- Guia: ${Guia_para_la_Detección_de_Fallas}\n `, sender: "bot" },
             ]);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { content: `- Comentario: ${comentario}\n `, sender: "bot" },
-            ]);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { content: `- Fecha inicio: ${fechaInicio}\n `, sender: "bot" },
-            ]);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { content: `- Fecha final: ${fechaFinal}\n `, sender: "bot" },
-            ]);
+           
           });
         } else {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { content: "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador", sender: "bot" },
+            { content: "No se encontraron registros. Intente reformular su consulta, de otro modo recargue la página.", sender: "bot" },
           ]);
         }
       }
     } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: toString(error), sender: "bot" },
+        { content: "Error de conexión con el servidor, intentelo más tarde o comun´quese con el administrador", sender: "bot" },
       ]);
     }
   };
@@ -132,7 +106,7 @@ function ChatReportes() {
         prompt:
           mensajeBase +
           newQuestion +
-          " Solo dame la query seleccionando Equipo, Fecha_Inicio, Fecha_Final, Componentes, Comentario. No tomes en cuenta tus respuestas anteriores, evita utilizar DATEADD, si se trata de filtar por fechas usa DATE_SUB, ten en consideracion que estamos en el año 2023",
+          " Solo dame la query seleccionando Deteccion_de_la_Informacion, Guia_para_la_Deteccion_de_Fallas. interpreta CAEX como Equipo (Solo toma el numero que puede ser 830, 930E4 y 930E3).",
       };
 
       const response = await openai.createCompletion(completeOptions);
@@ -159,10 +133,7 @@ function ChatReportes() {
   const handleResetConversation = () => {
     setMessages([]);
     setNewMessage("");
-  
   };
-
-
 
   const handleVoiceRecognition = () => {
     if (isRecording.current) {
@@ -235,7 +206,7 @@ function ChatReportes() {
             </button>
           </div>
           <h3 className="instruction">Guia para consultar:
-          "Dame las ultimas 10 caidas del equipo 150" - "Dame las caidas de los ultimos 3 dias". Siempre refierace a Equipo, y (si corresponde) especificar el nombre del mes.</h3>
+          "Codigo n° del CAEX (830 - 930E2 - 930E4)"</h3>
           
         </div>
         <div className="chat-messages">
@@ -272,4 +243,4 @@ function ChatReportes() {
   );
 }
 
-export default ChatReportes;
+export default ChatCodigos;

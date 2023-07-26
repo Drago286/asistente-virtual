@@ -20,7 +20,7 @@ const ChangePassword = () => {
 
     try {
       // Realiza la solicitud al backend para cambiar la contraseña
-      const response = await fetch("http://localhost:8000/api/change-password", {
+      const response = await fetch("http://172.20.10.2:8000/api/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

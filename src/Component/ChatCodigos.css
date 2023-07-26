@@ -19,7 +19,8 @@
 .chat-header {
   display: flex;
   align-items: center;
-  padding: 12px;
+  height: auto;
+  padding: 10px;
   background-color: #94d4ff;
   border-bottom: 1px solid #d7beac;
 }

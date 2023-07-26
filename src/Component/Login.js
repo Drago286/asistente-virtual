@@ -6,6 +6,7 @@ import "./Login.css"; // Agrega el archivo CSS para el estilo
 const Login = ({ onLoginSuccess }) => {
   const [SAP, setSAP] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // Estado para indicar si la solicitud está en progreso
   const [error, setError] = useState("");
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [accountApproval, setAccountApproval] = useState(false);
@@ -16,9 +17,21 @@ const Login = ({ onLoginSuccess }) => {
     e.preventDefault();
     setError("");
 
+    // Si la solicitud ya está en progreso, no hacer nada
+    if (loading) {
+      return;
+    }
+
+    if (!SAP || !password) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
+    setLoading(true); // Marcar que la solicitud está en progreso
+
     try {
       // Realiza la solicitud al backend con las credenciales ingresadas
-      const response = await fetch("http://localhost:8000/api/loginApi", {
+      const response = await fetch("http://172.20.10.2:8000/api/loginApi", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +46,6 @@ const Login = ({ onLoginSuccess }) => {
 
       if (response.ok) {
         // Verificar el estado del usuario antes de permitir el inicio de sesión
-        console.log(data);
         if (data.status === "habilitado") {
           onLoginSuccess(true);
         } else {
@@ -46,6 +58,8 @@ const Login = ({ onLoginSuccess }) => {
     } catch (error) {
       setError("Ocurrió un error en la solicitud.");
     }
+
+    setLoading(false); // Marcar que la solicitud ha finalizado
   };
 
   const toggleRegisterForm = () => {
@@ -66,7 +80,12 @@ const Login = ({ onLoginSuccess }) => {
   const handleCancelChangePassword = () => {
     setShowChangePasswordForm(false);
   };
-
+  const handleRegisterSuccess = () => {
+    // Cerrar el formulario de registro y mostrar el mensaje de aprobación
+    setShowRegisterForm(false);
+    setAccountApproval(true);
+    setShowApprovalMessage(true);
+  };
   return (
     <div className="Login">
       <div className="login-container">
@@ -93,7 +112,7 @@ const Login = ({ onLoginSuccess }) => {
             {!showRegisterForm ? <h2>Iniciar sesión</h2> : <h2></h2>}
             {error && <p className="error-message">{error}</p>}
             {showRegisterForm ? (
-              <Register />
+              <Register onRegisterSuccess={handleRegisterSuccess} />
             ) : (
               <form onSubmit={handleLogin}>
                 <div className="form-group">
@@ -114,8 +133,8 @@ const Login = ({ onLoginSuccess }) => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                <button type="submit" className="btn-login">
-                  Iniciar sesión
+                <button type="submit" className="btn-login" disabled={loading}>
+                  {loading ? 'Cargando...' : 'Iniciar sesión'}
                 </button>
               </form>
             )}
@@ -130,7 +149,7 @@ const Login = ({ onLoginSuccess }) => {
                 <button onClick={toggleRegisterForm}>Registrarse aquí</button>
               </p>
             )}
-
+  
             <p className="forgot-password-link">
               <button onClick={handleShowChangePasswordForm}>
                 Olvidé mi contraseña
@@ -141,6 +160,7 @@ const Login = ({ onLoginSuccess }) => {
       </div>
     </div>
   );
+  
 };
 
 export default Login;

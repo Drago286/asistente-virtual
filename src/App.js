@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import ChatReportes from './Component/ChatReportes';
-import Login from './Component/Login'; // Importa el componente de inicio de sesión
-
+import ChatContainer from './Component/ChatContainer';
+import Login from './Component/Login';
 
 function App() {
   // Estado para verificar si el usuario está autenticado
@@ -25,8 +24,7 @@ function App() {
       {!userAuthenticated ? (
         <Login onLoginSuccess={handleLoginSuccess} />
       ) : (
-        // Mostrar el componente ChatReportes si el usuario está autenticado
-        <ChatReportes onLogout={handleLogout} />
+        <ChatContainer />
       )}
     </>
   );
