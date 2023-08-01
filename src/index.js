@@ -5,6 +5,8 @@ import App2 from './App2';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ChatReportes from './Component/ChatReportes';
+import ChatContainer from './Component/ChatContainer';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

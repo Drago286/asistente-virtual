@@ -13,9 +13,11 @@ const Login = ({ onLoginSuccess }) => {
   const [showApprovalMessage, setShowApprovalMessage] = useState(false);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+   
 
     // Si la solicitud ya está en progreso, no hacer nada
     if (loading) {
@@ -52,6 +54,8 @@ const Login = ({ onLoginSuccess }) => {
           setAccountApproval(true); // Establecer el estado accountApproval en true
           setShowApprovalMessage(true); // Establecer el estado showApprovalMessage en true
         }
+      } else if (response.status === 404 && data.error === "usuario_no_encontrado") {
+        setError("Usuario no encontrado");
       } else {
         setError("Credenciales inválidas");
       }

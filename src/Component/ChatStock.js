@@ -1,15 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMicrophone,
-  faStopCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faStopCircle } from "@fortawesome/free-solid-svg-icons";
 
-import "./ChatReportes.css";
+import "./ChatStock.css";
 
-function ChatReportes() {
-  
+function ChatStock() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [query, setQuery] = useState("");
@@ -18,7 +14,7 @@ function ChatReportes() {
   const recognition = useRef(null);
   const isRecording = useRef(false);
   const mensajeBase =
-    "En contexto a una tabla llamada Fallas con las siguientes columnas Equipo,Fecha Inicio,Hora Inicio,Fecha Final,Hora Final,Duracion,Duracion Excel,Codigo,Categoria	Descripcion,Comentario	Caidas,Tipo Mant.,Código,Sistema,Sub Sistem.,Componentes,Equipo	Sistema,Componente,Horas,Mes,Motor,Flota, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
+    "En contexto a una tabla llamada componentes con las siguientes columnas (id,Equipo,Nombre,Sistema,UM,Stock,En_linea), genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
 
   const API_KEY = "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"; // Replace with your valid API key
 
@@ -28,16 +24,19 @@ function ChatReportes() {
 
   const openai = new OpenAIApi(configuration);
 
-  const sendQueryToAPI = async (query) => {
+  const getAllStock = async () => {
+
     console.log(query);
     try {
-      const response = await fetch("http://172.20.10.2:8000/api/execute-query", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      });
+      const response = await fetch(
+        "http://172.20.10.2:8000/api/execute-query-stock-general",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -46,18 +45,12 @@ function ChatReportes() {
         console.log(replyApi);
 
         if (data.length > 0) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { content: "Aquí tienes la lista de elementos:", sender: "bot" },
-          ]);
-
           data.forEach(function (objeto) {
-            var componente = objeto.Componentes || objeto.Componente || "";
-            var equipo = objeto.Equipo || objeto.Equipo || "";
-            var comentario = objeto.Comentario || "";
-            var fechaInicio = objeto.Fecha_Inicio || "";
-            var fechaFinal = objeto.Fecha_Final || "";
-            var duracion = objeto.Duracion || "";
+            var Nombre = objeto.Nombre || "";
+            var Equipo = objeto.Equipo || "";
+            var UM = objeto.UM || "";
+            var Stock = objeto.Stock || "";
+            var En_linea = objeto.En_linea || "";
 
             setMessages((prevMessages) => [
               ...prevMessages,
@@ -67,46 +60,152 @@ function ChatReportes() {
                 sender: "bot",
               },
             ]);
+
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Equipo: ${equipo}\n `, sender: "bot" },
+              {
+                content: `- Nombre: ${Nombre}\n `,
+                sender: "bot",
+              },
             ]);
 
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Componente: ${componente}\n `, sender: "bot" },
+              {
+                content: `- Equipo: ${Equipo}\n `,
+                sender: "bot",
+              },
             ]);
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Comentario: ${comentario}\n `, sender: "bot" },
+              {
+                content: `- ${UM}: ${Stock}\n `,
+                sender: "bot",
+              },
             ]);
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Fecha inicio: ${fechaInicio}\n `, sender: "bot" },
-            ]);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { content: `- Fecha final: ${fechaFinal}\n `, sender: "bot" },
-            ]);
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { content: `- Duración: ${duracion}\n `, sender: "bot" },
+              {
+                content: `- En línea: ${En_linea}\n `,
+                sender: "bot",
+              },
             ]);
           });
         } else {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { content: "No se encontraron registros en la base de datos. Reformule su pregunta o recargue la página.", sender: "bot" },
+            {
+              content:
+                "No se encontraron registros en la base de datos. Reformule su pregunta o recargue la página.",
+              sender: "bot",
+            },
           ]);
         }
       }
     } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador", sender: "bot" },
+        {
+          content:
+            "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador",
+          sender: "bot",
+        },
       ]);
     }
   };
+
+
+
+  const sendQueryToAPI = async (query) => {
+    console.log(query);
+    try {
+      const response = await fetch(
+        "http://172.20.10.2:8000/api/execute-query-stock",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setReplyApi(data);
+        console.log(data);
+        console.log(replyApi);
+
+        if (data.length > 0) {
+          data.forEach(function (objeto) {
+            var Nombre = objeto.Nombre || "";
+            var Equipo = objeto.Equipo || "";
+            var UM = objeto.UM || "";
+            var Stock = objeto.Stock || "";
+            var En_linea = objeto.En_linea || "";
+
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                content:
+                  "----------------------------------",
+                sender: "bot",
+              },
+            ]);
+
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                content: `- Nombre: ${Nombre}\n `,
+                sender: "bot",
+              },
+            ]);
+
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                content: `- Equipo: ${Equipo}\n `,
+                sender: "bot",
+              },
+            ]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                content: `- ${UM}: ${Stock}\n `,
+                sender: "bot",
+              },
+            ]);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                content: `- En línea: ${En_linea}\n `,
+                sender: "bot",
+              },
+            ]);
+          });
+        } else {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              content:
+                "No se encontraron registros en la base de datos. Reformule su pregunta o recargue la página.",
+              sender: "bot",
+            },
+          ]);
+        }
+      }
+    } catch (error) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          content:
+            "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador",
+          sender: "bot",
+        },
+      ]);
+    }
+  };
+
 
   const handleSendMessage = async (newQuestion) => {
     if (newQuestion.trim() === "") {
@@ -136,8 +235,8 @@ function ChatReportes() {
         ...options,
         prompt:
           mensajeBase +
-          newQuestion +
-          " Solo dame la query seleccionando Equipo, Fecha_Inicio, Fecha_Final, Componentes, Comentario y Duracion. No tomes en cuenta tus respuestas anteriores, evita utilizar DATEADD, si se trata de filtar por fechas usa DATE_SUB, ten en consideracion que estamos en el año 2023. Ten en cuenta que te puede preguntar por una cantidad especifica o por fecha.  ",
+          newQuestion.toUpperCase() +
+          " Solo dame la query seleccionando Equipo, Nombre, UM,  Stock y En_linea, selecciona todas las filas que contengan la palabra, filtra por 'Nombre', solo dame la QUERY.",
       };
 
       const response = await openai.createCompletion(completeOptions);
@@ -150,7 +249,11 @@ function ChatReportes() {
     } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: toString(error), sender: "bot" },
+        {
+          content:
+            "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador",
+          sender: "bot",
+        },
       ]);
     }
   };
@@ -164,10 +267,7 @@ function ChatReportes() {
   const handleResetConversation = () => {
     setMessages([]);
     setNewMessage("");
-  
   };
-
-
 
   const handleVoiceRecognition = () => {
     if (isRecording.current) {
@@ -228,20 +328,24 @@ function ChatReportes() {
   const handleChange = (event) => {
     setNewMessage(event.target.value);
   };
+ 
 
   return (
     <div className="App">
       <div className="chat-container">
         <div>
           <div className="chat-header">
-            <div className="chat-title">Asistente virtual</div>
+            {/* <div className="chat-title">Asistente virtual</div> */}
             <button onClick={handleResetConversation}>
               Eliminar conversacion
             </button>
+            <button onClick={getAllStock}>
+              Stock General
+            </button>
           </div>
-          <h3 className="instruction">Guia para consultar:
-          "Dame las ultimas 10 caidas del equipo 150" - "Dame las caidas de los ultimos 3 dias". Siempre refierace a Equipo, y (si corresponde) especificar el nombre del mes.</h3>
-          
+          <h3 className="instruction">
+            Guia para consultar: Ingresar palabra clave.
+          </h3>
         </div>
         <div className="chat-messages">
           {messages.map((message, index) => (
@@ -277,4 +381,4 @@ function ChatReportes() {
   );
 }
 
-export default ChatReportes;
+export default ChatStock;

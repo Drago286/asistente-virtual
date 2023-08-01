@@ -1,10 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMicrophone,
-  faStopCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faStopCircle } from "@fortawesome/free-solid-svg-icons";
 
 import "./ChatCodigos.css";
 
@@ -16,7 +13,8 @@ function ChatCodigos() {
 
   const recognition = useRef(null);
   const isRecording = useRef(false);
-  const mensajeBase = "En contexto a una tabla llamada Codigos con las siguientes columnas Codigo,Descripcion_del_Evento,Limitaciones_del_Evento,Deteccion_de_la_Informacion,Guia_para_la_Deteccion_de_Fallas,Equipo, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
+  const mensajeBase =
+    "En contexto a una tabla llamada Codigos con las siguientes columnas Codigo,Descripcion_del_Evento,Limitaciones_del_Evento,Deteccion_de_la_Informacion,Guia_para_la_Deteccion_de_Fallas,Equipo, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
 
   const API_KEY = "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"; // Replace with your valid API key
 
@@ -29,13 +27,16 @@ function ChatCodigos() {
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
-      const response = await fetch("http://172.20.10.2:8000/api/execute-query-codigos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      });
+      const response = await fetch(
+        "http://172.20.10.2:8000/api/execute-query-codigos",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -44,35 +45,47 @@ function ChatCodigos() {
         console.log(replyApi);
 
         if (data.length > 0) {
-          
-
           data.forEach(function (objeto) {
-            var Detección_de_la_lnformacion = objeto.Deteccion_de_la_Informacion || "";
-            var Guia_para_la_Detección_de_Fallas = objeto.Guia_para_la_Deteccion_de_Fallas ||  "";
-            
-           
+            var Detección_de_la_lnformacion =
+              objeto.Deteccion_de_la_Informacion || "";
+            var Guia_para_la_Detección_de_Fallas =
+              objeto.Guia_para_la_Deteccion_de_Fallas || "";
+
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Deteccion: ${Detección_de_la_lnformacion}\n `, sender: "bot" },
+              {
+                content: `- Deteccion: ${Detección_de_la_lnformacion}\n `,
+                sender: "bot",
+              },
             ]);
 
             setMessages((prevMessages) => [
               ...prevMessages,
-              { content: `- Guia: ${Guia_para_la_Detección_de_Fallas}\n `, sender: "bot" },
+              {
+                content: `- Guia: ${Guia_para_la_Detección_de_Fallas}\n `,
+                sender: "bot",
+              },
             ]);
-           
           });
         } else {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { content: "No se encontraron registros. Intente reformular su consulta, de otro modo recargue la página.", sender: "bot" },
+            {
+              content:
+                "No se encontraron registros en la base de datos. Reformule su pregunta o recargue la página.",
+              sender: "bot",
+            },
           ]);
         }
       }
     } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: "Error de conexión con el servidor, intentelo más tarde o comun´quese con el administrador", sender: "bot" },
+        {
+          content:
+            "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador",
+          sender: "bot",
+        },
       ]);
     }
   };
@@ -106,7 +119,7 @@ function ChatCodigos() {
         prompt:
           mensajeBase +
           newQuestion +
-          " Solo dame la query seleccionando Deteccion_de_la_Informacion, Guia_para_la_Deteccion_de_Fallas. interpreta CAEX como Equipo (Solo toma el numero que puede ser 830, 930E4 y 930E3).",
+          " Solo dame la query seleccionando Deteccion_de_la_Informacion, Guia_para_la_Deteccion_de_Fallas. interpreta CAEX como Equipo (Solo toma el numero que puede ser 830, 930E4 y 930E2), filtra según el CAEX que se indique, caso contrario busca en todos.",
       };
 
       const response = await openai.createCompletion(completeOptions);
@@ -205,9 +218,9 @@ function ChatCodigos() {
               Eliminar conversacion
             </button>
           </div>
-          <h3 className="instruction">Guia para consultar:
-          "Codigo n° del CAEX (830 - 930E2 - 930E4)"</h3>
-          
+          <h3 className="instruction">
+            Guia para consultar: "Codigo n° del CAEX (830 - 930E2 - 930E4)"
+          </h3>
         </div>
         <div className="chat-messages">
           {messages.map((message, index) => (
