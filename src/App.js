@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ChatContainer from './Component/ChatContainer';
 import Login from './Component/Login';
+import { AsistenteProvider } from './AsistenteContext';
 
 function App() {
   // Estado para verificar si el usuario está autenticado
@@ -19,14 +20,14 @@ function App() {
   };
 
   return (
-    <>
+    <AsistenteProvider>
       {/* Mostrar el componente de inicio de sesión si el usuario no está autenticado */}
       {!userAuthenticated ? (
         <Login onLoginSuccess={handleLoginSuccess} />
       ) : (
         <ChatContainer />
       )}
-    </>
+    </AsistenteProvider>
   );
 }
 

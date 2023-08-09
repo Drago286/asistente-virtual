@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext} from "react";
+import AsistenteContext from "../AsistenteContext";
 //import "./ChangePassword.css"; // Agrega el archivo CSS para el estilo
 
 const ChangePassword = () => {
@@ -7,6 +8,8 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const { API_KEY } = useContext(AsistenteContext);
+  const { baseURL } = useContext(AsistenteContext);
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -20,7 +23,7 @@ const ChangePassword = () => {
 
     try {
       // Realiza la solicitud al backend para cambiar la contraseña
-      const response = await fetch("http://172.20.10.2:8000/api/change-password", {
+      const response = await fetch(baseURL+"change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,12 +38,13 @@ const ChangePassword = () => {
 
       if (response.ok) {
         setSuccessMessage("Contraseña cambiada exitosamente. Tu cuenta ha sido deshabilitada.");
-      } else {
-        setError("Ocurrió un error al cambiar la contraseña.");
+      } else if(response.status ===404) {
+        setError("Usuario no encontrado");
+        console.log(data);
       }
     } catch (error) {
-        
         setError("Ocurrió un error en la solicitud.");
+       
     }
   };
 

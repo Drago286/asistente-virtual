@@ -1,27 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMicrophone,
-  faStopCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faStopCircle } from "@fortawesome/free-solid-svg-icons";
+import AsistenteContext from "../AsistenteContext";
 
-import "./ChatReportes.css";
+import "./CSS/ChatReportes.css";
 
 function ChatReportes() {
-  
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [query, setQuery] = useState("");
   const [replyApi, setReplyApi] = useState([]);
-
+  const { API_KEY } = useContext(AsistenteContext);
+  const { baseURL } = useContext(AsistenteContext);
   const recognition = useRef(null);
   const isRecording = useRef(false);
   const mensajeBase =
     "En contexto a una tabla llamada Fallas con las siguientes columnas Equipo,Fecha Inicio,Hora Inicio,Fecha Final,Hora Final,Duracion,Duracion Excel,Codigo,Categoria	Descripcion,Comentario	Caidas,Tipo Mant.,Código,Sistema,Sub Sistem.,Componentes,Equipo	Sistema,Componente,Horas,Mes,Motor,Flota, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
-
-  const API_KEY = "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"; // Replace with your valid API key
-
   const configuration = new Configuration({
     apiKey: API_KEY,
   });
@@ -31,7 +26,7 @@ function ChatReportes() {
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
-      const response = await fetch("http://172.20.10.2:8000/api/execute-query", {
+      const response = await fetch(baseURL + "execute-query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,8 +57,7 @@ function ChatReportes() {
             setMessages((prevMessages) => [
               ...prevMessages,
               {
-                content:
-                  "----------------------------------",
+                content: "----------------------------------",
                 sender: "bot",
               },
             ]);
@@ -96,14 +90,22 @@ function ChatReportes() {
         } else {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { content: "No se encontraron registros en la base de datos. Reformule su pregunta o recargue la página.", sender: "bot" },
+            {
+              content:
+                "No se encontraron registros en la base de datos. Reformule su pregunta o recargue la página.",
+              sender: "bot",
+            },
           ]);
         }
       }
     } catch (error) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { content: "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador", sender: "bot" },
+        {
+          content:
+            "Error de conexión con el servidor, intentelo más tarde o comuníquese con el administrador",
+          sender: "bot",
+        },
       ]);
     }
   };
@@ -137,7 +139,7 @@ function ChatReportes() {
         prompt:
           mensajeBase +
           newQuestion +
-          " Solo dame la query seleccionando Equipo, Fecha_Inicio, Fecha_Final, Componentes, Comentario y Duracion. No tomes en cuenta tus respuestas anteriores, evita utilizar DATEADD, si se trata de filtar por fechas usa DATE_SUB, ten en consideracion que estamos en el año 2023. Ten en cuenta que te puede preguntar por una cantidad especifica o por fecha.  ",
+          " Solo dame la query seleccionando Equipo, Fecha_Inicio, Fecha_Final, Componentes, Comentario y Duracion. No tomes en cuenta tus respuestas anteriores, evita utilizar DATEADD, si se trata de filtar por fechas usa DATE_SUB, ten en consideracion que estamos en el año 2023.",
       };
 
       const response = await openai.createCompletion(completeOptions);
@@ -164,10 +166,7 @@ function ChatReportes() {
   const handleResetConversation = () => {
     setMessages([]);
     setNewMessage("");
-  
   };
-
-
 
   const handleVoiceRecognition = () => {
     if (isRecording.current) {
@@ -239,9 +238,11 @@ function ChatReportes() {
               Eliminar conversacion
             </button>
           </div>
-          <h3 className="instruction">Guia para consultar:
-          "Dame las ultimas 10 caidas del equipo 150" - "Dame las caidas de los ultimos 3 dias". Siempre refierace a Equipo, y (si corresponde) especificar el nombre del mes.</h3>
-          
+          <h3 className="instruction">
+            Guia para consultar: "Dame las ultimas 10 caidas del equipo 150" -
+            "Dame las caidas de los ultimos 3 dias". Siempre refierace a Equipo,
+            y (si corresponde) especificar el nombre del mes.
+          </h3>
         </div>
         <div className="chat-messages">
           {messages.map((message, index) => (

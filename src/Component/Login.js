@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import ChangePassword from "./ChangePassword";
 import Register from "./Register";
-import "./Login.css"; // Agrega el archivo CSS para el estilo
+import AsistenteContext from "../AsistenteContext";
+
+import "./CSS/Login.css"; // Agrega el archivo CSS para el estilo
 
 const Login = ({ onLoginSuccess }) => {
+  const { API_KEY } = useContext(AsistenteContext);
+
+  const { baseURL } = useContext(AsistenteContext);
+
   const [SAP, setSAP] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // Estado para indicar si la solicitud está en progreso
@@ -33,7 +39,7 @@ const Login = ({ onLoginSuccess }) => {
 
     try {
       // Realiza la solicitud al backend con las credenciales ingresadas
-      const response = await fetch("http://172.20.10.2:8000/api/loginApi", {
+      const response = await fetch(baseURL+"loginApi", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,6 +73,7 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   const toggleRegisterForm = () => {
+    setError("");
     setShowRegisterForm(!showRegisterForm);
   };
 
@@ -76,6 +83,7 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   const handleShowChangePasswordForm = () => {
+    setError("");
     setShowChangePasswordForm(true);
     setShowRegisterForm(false);
     setShowApprovalMessage(false);

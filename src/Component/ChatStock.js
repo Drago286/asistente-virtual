@@ -1,22 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone, faStopCircle } from "@fortawesome/free-solid-svg-icons";
+import AsistenteContext from "../AsistenteContext";
 
-import "./ChatStock.css";
+import "./CSS/ChatStock.css";
 
 function ChatStock() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [query, setQuery] = useState("");
   const [replyApi, setReplyApi] = useState([]);
-
+  const { API_KEY } = useContext(AsistenteContext);
+  const { baseURL } = useContext(AsistenteContext);
   const recognition = useRef(null);
   const isRecording = useRef(false);
   const mensajeBase =
     "En contexto a una tabla llamada componentes con las siguientes columnas (id,Equipo,Nombre,Sistema,UM,Stock,En_linea), genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
-
-  const API_KEY = "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"; // Replace with your valid API key
 
   const configuration = new Configuration({
     apiKey: API_KEY,
@@ -25,18 +25,14 @@ function ChatStock() {
   const openai = new OpenAIApi(configuration);
 
   const getAllStock = async () => {
-
     console.log(query);
     try {
-      const response = await fetch(
-        "http://172.20.10.2:8000/api/execute-query-stock-general",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(baseURL + "execute-query-stock-general", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -55,8 +51,7 @@ function ChatStock() {
             setMessages((prevMessages) => [
               ...prevMessages,
               {
-                content:
-                  "----------------------------------",
+                content: "----------------------------------",
                 sender: "bot",
               },
             ]);
@@ -114,13 +109,11 @@ function ChatStock() {
     }
   };
 
-
-
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
       const response = await fetch(
-        "http://172.20.10.2:8000/api/execute-query-stock",
+        baseURL+"execute-query-stock",
         {
           method: "POST",
           headers: {
@@ -147,8 +140,7 @@ function ChatStock() {
             setMessages((prevMessages) => [
               ...prevMessages,
               {
-                content:
-                  "----------------------------------",
+                content: "----------------------------------",
                 sender: "bot",
               },
             ]);
@@ -205,7 +197,6 @@ function ChatStock() {
       ]);
     }
   };
-
 
   const handleSendMessage = async (newQuestion) => {
     if (newQuestion.trim() === "") {
@@ -328,7 +319,6 @@ function ChatStock() {
   const handleChange = (event) => {
     setNewMessage(event.target.value);
   };
- 
 
   return (
     <div className="App">
@@ -339,9 +329,7 @@ function ChatStock() {
             <button onClick={handleResetConversation}>
               Eliminar conversacion
             </button>
-            <button onClick={getAllStock}>
-              Stock General
-            </button>
+            <button onClick={getAllStock}>Stock General</button>
           </div>
           <h3 className="instruction">
             Guia para consultar: Ingresar palabra clave.

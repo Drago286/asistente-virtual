@@ -1,22 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Configuration, OpenAIApi } from "openai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone, faStopCircle } from "@fortawesome/free-solid-svg-icons";
+import AsistenteContext from "../AsistenteContext";
 
-import "./ChatCodigos.css";
+import "./CSS/ChatCodigos.css";
 
 function ChatCodigos() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [query, setQuery] = useState("");
   const [replyApi, setReplyApi] = useState([]);
+  const { API_KEY } = useContext(AsistenteContext);
+  const { baseURL } = useContext(AsistenteContext);
 
   const recognition = useRef(null);
   const isRecording = useRef(false);
   const mensajeBase =
-    "En contexto a una tabla llamada Codigos con las siguientes columnas Codigo,Descripcion_del_Evento,Limitaciones_del_Evento,Deteccion_de_la_Informacion,Guia_para_la_Deteccion_de_Fallas,Equipo, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
-
-  const API_KEY = "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"; // Replace with your valid API key
+    "En contexto a una tabla llamada codigos con las siguientes columnas Codigo,Descripcion_del_Evento,Limitaciones_del_Evento,Deteccion_de_la_Informacion,Guia_para_la_Deteccion_de_Fallas,Equipo, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
 
   const configuration = new Configuration({
     apiKey: API_KEY,
@@ -27,16 +28,13 @@ function ChatCodigos() {
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
-      const response = await fetch(
-        "http://172.20.10.2:8000/api/execute-query-codigos",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query }),
-        }
-      );
+      const response = await fetch(baseURL + "execute-query-codigos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -119,7 +117,7 @@ function ChatCodigos() {
         prompt:
           mensajeBase +
           newQuestion +
-          " Solo dame la query seleccionando Deteccion_de_la_Informacion, Guia_para_la_Deteccion_de_Fallas. interpreta CAEX como Equipo (Solo toma el numero que puede ser 830, 930E4 y 930E2), filtra según el CAEX que se indique, caso contrario busca en todos.",
+          " Solo dame la query seleccionando Deteccion_de_la_Informacion, Guia_para_la_Deteccion_de_Fallas, filtra según el CAEX que se indique el cual puede ser 830, 930E2 y 930E4, interpreta CAEX como Equipo a la hora de hacer la query.",
       };
 
       const response = await openai.createCompletion(completeOptions);
