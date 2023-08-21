@@ -23,6 +23,7 @@ function ChatReportes() {
 
   const openai = new OpenAIApi(configuration);
 
+    // Función para enviar una consulta a la API
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
@@ -110,6 +111,7 @@ function ChatReportes() {
     }
   };
 
+    // Función para enviar un nuevo mensaje
   const handleSendMessage = async (newQuestion) => {
     if (newQuestion.trim() === "") {
       // Si el campo está vacío o solo contiene espacios en blanco, no hacer nada
@@ -156,18 +158,18 @@ function ChatReportes() {
       ]);
     }
   };
-
+  // Efecto para enviar la consulta a la API cuando la variable 'query' cambia
   useEffect(() => {
     if (query !== "") {
       sendQueryToAPI(query);
     }
   }, [query]);
-
+// Función para reiniciar la conversación
   const handleResetConversation = () => {
     setMessages([]);
     setNewMessage("");
   };
-
+// Función para manejar el inicio/paro del reconocimiento de voz
   const handleVoiceRecognition = () => {
     if (isRecording.current) {
       stopRecognition();
@@ -181,7 +183,7 @@ function ChatReportes() {
       microphoneButton.classList.toggle("recording");
     }
   };
-
+// Función para iniciar el reconocimiento de voz
   const startRecognition = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -209,25 +211,25 @@ function ChatReportes() {
       console.error("Speech recognition is not supported in this browser.");
     }
   };
-
+ // Función para detener el reconocimiento de voz
   const stopRecognition = () => {
     if (recognition.current) {
       recognition.current.stop();
       isRecording.current = false;
     }
   };
-
+// Función para manejar la pulsación de tecla (Enter) en el campo de mensaje
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       handleSendMessage(newMessage);
     }
   };
-
+// Función para manejar el cambio en el campo de mensaje
   const handleChange = (event) => {
     setNewMessage(event.target.value);
   };
-
+ // JSX que define la estructura del componente
   return (
     <div className="App">
       <div className="chat-container">

@@ -19,7 +19,7 @@ const Login = ({ onLoginSuccess }) => {
   const [showApprovalMessage, setShowApprovalMessage] = useState(false);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
-
+// Función para manejar el inicio de sesión
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -71,27 +71,28 @@ const Login = ({ onLoginSuccess }) => {
 
     setLoading(false); // Marcar que la solicitud ha finalizado
   };
-
+// Función para alternar entre mostrar y ocultar el formulario de registro
   const toggleRegisterForm = () => {
     setError("");
     setShowRegisterForm(!showRegisterForm);
   };
-
+// Función para volver al inicio de sesión desde el proceso de aprobación
   const handleBackToLogin = () => {
     setAccountApproval(false);
     setShowApprovalMessage(false);
   };
-
+// Función para mostrar el formulario de cambio de contraseña
   const handleShowChangePasswordForm = () => {
     setError("");
     setShowChangePasswordForm(true);
     setShowRegisterForm(false);
     setShowApprovalMessage(false);
   };
-
+// Función para cancelar el formulario de cambio de contraseña
   const handleCancelChangePassword = () => {
     setShowChangePasswordForm(false);
   };
+  // Función para manejar el éxito del registro
   const handleRegisterSuccess = () => {
     // Cerrar el formulario de registro y mostrar el mensaje de aprobación
     setShowRegisterForm(false);

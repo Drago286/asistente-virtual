@@ -4,9 +4,11 @@ import ChatCodigos from "./ChatCodigos";
 import ChatStock from "./ChatStock";
 
 function ChatContainer() {
+  // Estados para controlar qué chat está activo
   const [showChatReportes, setShowChatReportes] = useState(true);
   const [showChatStock, setShowChatStock] = useState(false);
 
+   // Función para cambiar entre los chats
   const handleToggleChat = (chatType) => {
     if (chatType === "reportes") {
       setShowChatReportes(true);

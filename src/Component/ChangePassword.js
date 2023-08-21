@@ -11,7 +11,12 @@ const ChangePassword = () => {
   const { API_KEY } = useContext(AsistenteContext);
   const { baseURL } = useContext(AsistenteContext);
 
-  const handleChangePassword = async (e) => {
+    /**
+     * 
+     * @param {*} e 
+     * @returns Funcion que cambia la contraseña del usuario al cual corresponda el SAP indicado.
+     */
+    const handleChangePassword = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMessage("");

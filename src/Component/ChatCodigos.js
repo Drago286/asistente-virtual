@@ -13,18 +13,25 @@ function ChatCodigos() {
   const [replyApi, setReplyApi] = useState([]);
   const { API_KEY } = useContext(AsistenteContext);
   const { baseURL } = useContext(AsistenteContext);
-
   const recognition = useRef(null);
   const isRecording = useRef(false);
   const mensajeBase =
     "En contexto a una tabla llamada codigos con las siguientes columnas Codigo,Descripcion_del_Evento,Limitaciones_del_Evento,Deteccion_de_la_Informacion,Guia_para_la_Deteccion_de_Fallas,Equipo, genera una query segun la consulta de mi usuario, pero en tu respuesta solo quiero la query, evita agregar tus idicaciones:";
 
+    /**
+     * Configuracion inicial del openAI
+     */
   const configuration = new Configuration({
     apiKey: API_KEY,
   });
 
   const openai = new OpenAIApi(configuration);
 
+  /**
+   * 
+   * @param {*} query 
+   * Funcion que envia Query generada autamaticamente por la AI a la API, retornarno la informacion en un JSON, luego es analizada y desplegada al usuario.
+   */
   const sendQueryToAPI = async (query) => {
     console.log(query);
     try {
@@ -88,6 +95,11 @@ function ChatCodigos() {
     }
   };
 
+  /**
+   * Funcion que envia la consulta a la AI
+   * @param {*} newQuestion 
+   * @returns Query que sera enviada a la API
+   */
   const handleSendMessage = async (newQuestion) => {
     if (newQuestion.trim() === "") {
       // Si el campo está vacío o solo contiene espacios en blanco, no hacer nada
@@ -141,11 +153,17 @@ function ChatCodigos() {
     }
   }, [query]);
 
+  /**
+   * Funcion que vacia el arrat de mensajes.
+   */
   const handleResetConversation = () => {
     setMessages([]);
     setNewMessage("");
   };
 
+  /**
+   * Funcion que permite al usuario activar el reconociemiento de voz
+   */
   const handleVoiceRecognition = () => {
     if (isRecording.current) {
       stopRecognition();
@@ -160,6 +178,9 @@ function ChatCodigos() {
     }
   };
 
+  /**
+   * Comienzo del reconomiento de voz de voz
+   */
   const startRecognition = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -188,6 +209,9 @@ function ChatCodigos() {
     }
   };
 
+  /**
+   * Detencion del reconocimiento de voz
+   */
   const stopRecognition = () => {
     if (recognition.current) {
       recognition.current.stop();
@@ -195,6 +219,11 @@ function ChatCodigos() {
     }
   };
 
+  /**
+   * Funcion que envia el mensaje una vez se presione "ENTER"
+   * @param {*} event 
+   * 
+   */
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();

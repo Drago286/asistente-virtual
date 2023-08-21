@@ -11,6 +11,7 @@ const Register = ({ onRegisterSuccess }) => {
   const [error, setError] = useState("");
   const { baseURL } = useContext(AsistenteContext);
 
+   // Función para manejar el registro
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -19,18 +20,20 @@ const Register = ({ onRegisterSuccess }) => {
       setError("Las contraseñas no coinciden");
       return;
     }
-
+ // Si la solicitud ya está en progreso, no hacer nada
     if (loading) {
       return;
     }
-
+ // Verifica si todos los campos están completos
     if (!SAP || !password || !name || !confirmPassword || !email) {
       setError("Por favor, completa todos los campos.");
       return;
     }
 
-    setLoading(true);
+    setLoading(true);// Marcar que la solicitud está en progreso
 
+
+     // Realiza la solicitud al backend para el registro
     try {
       const response = await fetch(baseURL+"register", {
         method: "POST",
@@ -52,6 +55,7 @@ const Register = ({ onRegisterSuccess }) => {
         // Llamar a la función onRegisterSuccess para notificar al componente Login
         onRegisterSuccess();
       } else {
+         // Maneja los errores de registro
         if (data.error.SAP) {
           setError("SAP ya registrado");
         }
@@ -66,7 +70,7 @@ const Register = ({ onRegisterSuccess }) => {
       console.log(toString(error));
       setError("Ocurrió un error en la solicitud.");
     }
-
+// Marcar que la solicitud ha finalizado
     setLoading(false);
   };
 
