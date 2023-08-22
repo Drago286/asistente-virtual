@@ -1,0 +1,73 @@
+/* Register.css */
+
+/* Estilos para el contenedor principal */
+.register-container {
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilos para el encabezado */
+  h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilos para los mensajes de error */
+  .error-message {
+    color: #e74c3c;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  
+  /* Estilos para el formulario */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  /* Estilos para el botón de registro */
+  .btn-register {
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-register:hover {
+    background-color: #2980b9;
+  }
+  
+  .btn-register:active {
+    background-color: #1f6697;
+  }
+  
