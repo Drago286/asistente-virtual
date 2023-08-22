@@ -7,8 +7,8 @@ const AsistenteContext = createContext();
 export const AsistenteProvider = ({children}) => {
 
      // Definir las constantes baseURL y API_KEY con los valores correspondientes
-    const baseURL = "http://172.20.10.2:8000/api/";//<---Aqui va tu IP http://{tu ip}:8000/api/
-    const API_KEY = "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";//<---Aqui va tu API_KEY
+    const baseURL = "1.1.1.1";//<---Aqui va tu IP http://{tu ip}:8000/api/
+    const API_KEY = "";//<---Aqui va tu API_KEY
 
     return (
         <AsistenteContext.Provider 
